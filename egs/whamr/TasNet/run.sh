@@ -38,13 +38,13 @@ data_dir=data  # Local data directory (No disk space needed)
 batch_size=32
 lr=0.001
 epochs=200
-weight_decay=0.00001
+weight_decay=0  # 0.00001
 
 # Architecture
-kernel_size=40
-stride=20
-n_layers=4
-n_units=600
+kernel_size=80
+stride=40
+n_layers=3
+n_units=300
 
 # Evaluation
 eval_use_gpu=1
