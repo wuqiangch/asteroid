@@ -1,7 +1,7 @@
 ### WaveSplit
 
-things currently not clear:
----
+#### Currently not clear:
+
 - not clear if different encoders are used for separation and speaker stack. (from image in the paper it seems so)
 - what is embedding dimension ? It seems 512 but it is not explicit in the paper
 - mask used (sigmoid ?)
@@ -10,8 +10,10 @@ things currently not clear:
 - loss right now is prone to go NaN especially if we don't take the mean after l2-distances computation. 
 
 ---
-structure:
-- train.py contains training loop (nets instantiation lines 48-60, training loop lines 100- 116)
+#### Structure:
+- train.py contains training loop (nets instantiation 
+[lines 48-60](https://github.com/mpariente/asteroid/pull/70/files#diff-f69bcb61820a4a7cfc8fda9a554c251cR49), training loop lines 
+[100- 116](https://github.com/mpariente/asteroid/pull/70/files#diff-f69bcb61820a4a7cfc8fda9a554c251cR100))
 - losses.py wavesplit losses
 - wavesplit.py sep and speaker stacks nets
 - wavesplitwham.py dataset parsing 

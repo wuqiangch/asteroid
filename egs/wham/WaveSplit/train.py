@@ -34,17 +34,14 @@ parser.add_argument('--gpus', type=str, help='list of GPUs', default='-1')
 parser.add_argument('--exp_dir', default='exp/tmp',
                     help='Full path to save best validation model')
 
-warnings.simplefilter("ignore", UserWarning)
-
 
 class Wavesplit(pl.LightningModule): # redefinition
-
     def __init__(self, train_loader,
                  val_loader=None, scheduler=None, config=None):
         super().__init__()
-
         # instantiation of stacks optimizers etc
-        # NOTE: I use separated encoders for speaker and sep stack as it is not specified in the paper...
+        # NOTE: I use separated encoders for speaker and sep stack
+        # as it is not specified in the paper...
 
         self.enc_spk, self.dec = make_enc_dec("free", 512, 16, 8)
         self.enc_sep = deepcopy(self.enc_spk)
@@ -75,7 +72,6 @@ class Wavesplit(pl.LightningModule): # redefinition
         Returns:
             :class:`torch.Tensor`
         """
-
         return self.model(*args, **kwargs)
 
     def common_step(self, batch, batch_nb):
@@ -102,8 +98,13 @@ class Wavesplit(pl.LightningModule): # redefinition
         spk_vectors = self.spk_stack(tf_rep)
         B, src, embed, frames = spk_vectors.size()
 
-        # torch.ones ideally would be the speaker activty at frame level. Because WHAM speakers can be considered always two and active we fix this for now.
-        spk_loss, spk_vectors, oracle = self.spk_loss(spk_vectors, torch.ones((B, src, frames)).to(spk_vectors.device), spk_ids)
+        # torch.ones ideally would be the speaker activty at frame level.
+        # Because WHAM speakers can be considered always two and active we
+        # fix this for now.
+        spk_loss, spk_vectors, oracle = self.spk_loss(
+            spk_vectors, torch.ones((B, src, frames)).to(spk_vectors.device),
+            spk_ids
+        )
         tf_rep = self.enc_sep(inputs)
         B, n_filters, frames = tf_rep.size()
         tf_rep = tf_rep[:, None, ...].expand(-1, src, -1, -1).reshape(B*src, n_filters, frames)
@@ -218,31 +219,10 @@ class Wavesplit(pl.LightningModule): # redefinition
     def val_dataloader(self):
         return self.val_loader
 
-    @pl.data_loader
-    def tng_dataloader(self):  # pragma: no cover
-        """ Deprecated."""
-        pass
-
     def on_save_checkpoint(self, checkpoint):
         """ Overwrite if you want to save more things in the checkpoint."""
         checkpoint['training_config'] = self.config
         return checkpoint
-
-    def on_batch_start(self, batch):
-        """ Overwrite if needed. Called by pytorch-lightning"""
-        pass
-
-    def on_batch_end(self):
-        """ Overwrite if needed. Called by pytorch-lightning"""
-        pass
-
-    def on_epoch_start(self):
-        """ Overwrite if needed. Called by pytorch-lightning"""
-        pass
-
-    def on_epoch_end(self):
-        """ Overwrite if needed. Called by pytorch-lightning"""
-        pass
 
     @staticmethod
     def none_to_string(dic):

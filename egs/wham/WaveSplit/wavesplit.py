@@ -6,7 +6,6 @@ from asteroid.utils import has_arg
 
 
 class Conv1DBlock(nn.Module):
-
     def __init__(self, hid_chan, kernel_size, padding,
                  dilation, norm_type="gLN"):
         super(Conv1DBlock, self).__init__()
@@ -24,12 +23,11 @@ class Conv1DBlock(nn.Module):
 
         return self.out(x)
 
-class SepConv1DBlock(nn.Module):
 
+class SepConv1DBlock(nn.Module):
     def __init__(self, in_chan_spk_vec, hid_chan, kernel_size, padding,
                  dilation, norm_type="gLN", use_FiLM=True):
         super(SepConv1DBlock, self).__init__()
-
         self.use_FiLM = use_FiLM
         conv_norm = norms.get(norm_type)
         self.depth_conv1d = nn.Conv1d(hid_chan, hid_chan, kernel_size,
@@ -61,7 +59,6 @@ class SepConv1DBlock(nn.Module):
 
 class SpeakerStack(nn.Module):
     # basically this is plain conv-tasnet remove this in future releases
-
     def __init__(self, in_chan, n_src, n_blocks=14, n_repeats=1,
                  kernel_size=3,
                  norm_type="gLN"):
@@ -183,8 +180,3 @@ class SeparationStack(nn.Module):
             'norm_type': self.norm_type,
         }
         return config
-
-
-
-
-

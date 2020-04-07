@@ -8,7 +8,6 @@ import math
 
 
 class ClippedSDR(nn.Module):
-
     def __init__(self, clip_value=-30):
         super(ClippedSDR, self).__init__()
 
@@ -16,16 +15,13 @@ class ClippedSDR(nn.Module):
         self.clip_value = float(clip_value)
 
     def forward(self, est_targets, targets):
-
         return torch.clamp(self.snr(est_targets, targets), min=self.clip_value)
 
 
 class SpeakerVectorLoss(nn.Module):
-
     def __init__(self, n_speakers, embed_dim=32, learnable_emb=True, loss_type="global",
                  weight=10, distance_reg=0.3, gaussian_reg=0.2, return_oracle=True):
         super(SpeakerVectorLoss, self).__init__()
-
 
         # not clear how embeddings are initialized.
 
@@ -35,7 +31,6 @@ class SpeakerVectorLoss(nn.Module):
         self.distance_reg = float(distance_reg)
         self.gaussian_reg = float(gaussian_reg)
         self.return_oracle = return_oracle
-
         assert loss_type in ["distance", "global", "local"]
 
         # I initialize embeddings to be on unit sphere as speaker stack uses euclidean normalization
@@ -52,7 +47,6 @@ class SpeakerVectorLoss(nn.Module):
         if loss_type != "dist":
             self.alpha = nn.Parameter(torch.Tensor([1.])) # not clear how these are initialized...
             self.beta = nn.Parameter(torch.Tensor([0.]))
-
 
     ### losses go to NaN if I follow strictly the formulas maybe I am missing something...
 
@@ -96,7 +90,9 @@ class SpeakerVectorLoss(nn.Module):
 
     def forward(self, speaker_vectors, spk_mask, spk_labels):
 
-        # spk_mask ideally would be the speaker activty at frame level. Because WHAM speakers can be considered always two and active we fix this for now.
+        # spk_mask ideally would be the speaker activty at frame level.
+        # Because WHAM speakers can be considered always two and active we
+        # fix this for now.
         # mask with ones and zeros B, SRC, FRAMES
 
         if self.gaussian_reg:
@@ -180,19 +176,3 @@ if __name__ == "__main__":
     c = ClippedSDR(-30)
     a = torch.rand((2, 3, 200))
     print(c(a, a))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
